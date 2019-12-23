@@ -1,7 +1,14 @@
+# Makes a shelve database of birthdays.txt, a list in format:
+# 'First_Last 12-05'
+# i.e December 5
+# Updates the database on subsequent runs if any additions/changes
+# to the original .txt
+# Run on startup for quick update on upcomming birthdays
+
 import shelve, re, os, datetime
 
 # bre = re.compile(r'(\\d{1,2})-(\\d{1,2})')
-d = datetime.date.today().day, datetime.date.today().month
+
 birthdays = shelve.open('birthdays')
 
 if 'birthdays.dir' not in os.listdir():
@@ -15,7 +22,21 @@ if 'birthdays.dir' not in os.listdir():
         line = original_b.readline().strip()
     original_b.close()
     print('Done!')
+else:
+    print('\nChecking for updates to the original bday file...')
+    original_b = open('birthdays.txt')
+    line = original_b.readline().strip()
+    while line != '':
+        split = line.split()
+        if split[0] not in birthdays:
+            birthdays[split[0]] = split[1]
+            print('\nAdding: ', split)
+        elif birthdays[split[0]] != split[1]:
+            print('Changing '+split[0]+'s bday to: ', split[1])
+            birthdays[split[0]] = split[1]
 
+        line = original_b.readline().strip()
+    original_b.close()
 
 def upcomming():
     c = datetime.date.today().month
@@ -28,16 +49,11 @@ def upcomming():
     return to_return
 
 
-x = False
-while not x:
-    usr = input('''\nEnter 'u' to print all upcoming birthdays 
-      ||| Enter 's' to search for a particular name or month
-      \n Enter 'a' to add 
-      ||| Enter 'c' to change an entry ||| Enter 'q' to quit''')
-    if usr == 'u':
-        print(upcomming())
-    if usr == 'q':
-        x = True
+print('\n\t*** Upcoming Birthdays ***')
+ok = upcomming()
+for i in ok:
+    print('\n'+'\t\t'+i)
+
 
 birthdays.close()
 quit()
