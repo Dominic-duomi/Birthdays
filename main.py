@@ -41,7 +41,8 @@ else:
 def upcomming():
     c = datetime.date.today().month
     v = (c + 1 if c+1 < 13 else 1)
-    lowest = min([int(i.split('-')[0]) for i in birthdays.values()])
+    # lowest = min([int(i.split('-')[0]) for i in birthdays.values()])
+    lowest: (c - 1 if c - 1 > 0 else 12)
 
     to_return = [(i + ' : ' + j) for (i,j) in birthdays.items() if int(j.split('-')[0]) == c
                  or int(j.split('-')[0]) == v
